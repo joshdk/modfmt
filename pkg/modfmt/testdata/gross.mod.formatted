@@ -1,0 +1,96 @@
+// This file is a complete mess :)
+// This is an example header comment.
+// Here is another header comment.
+// And another header comment.
+// And the final header comment.
+
+// module comment 1
+// module comment 2
+module example.com/my/module
+
+// go comment 1
+// go comment 2
+go 1.23.2
+
+// toolchain comment 1
+// toolchain comment 2
+toolchain go1.23
+
+godebug (
+	// godebug bar comment 1
+	// godebug bar comment 2
+	bar=true
+	// godebug foo comment 1
+	// godebug foo comment 2
+	foo=true
+)
+
+tool (
+	// tool example.com/tool/a comment 1
+	// tool example.com/tool/a comment 2
+	example.com/tool/a
+	// tool example.com/tool/b comment 1
+	// tool example.com/tool/b comment 2
+	example.com/tool/b
+)
+
+require (
+	// require example.com/a/a comment 1
+	// require example.com/a/a comment 2
+	example.com/a/a v1.1.1
+	// require example.com/b/b comment 1
+	// require example.com/b/b comment 1
+	example.com/b/b v1.2.2
+)
+
+require (
+	// require indirect example.com/a/a comment 1
+	example.com/a/a v1.1.1 // indirect
+	// require indirect example.com/b/b comment 1
+	example.com/b/b v1.2.2 // indirect
+)
+
+ignore (
+	// ignore a comment 1
+	// ignore b comment 2
+	./ignore/a
+	// ignore b comment 1
+	// ignore b comment 2
+	./ignore/b
+)
+
+exclude (
+	// exclude example.com/c/c comment 1
+	// exclude example.com/c/c comment 2
+	example.com/c/c v1.3.3
+)
+
+replace (
+	// replace example.com/a/a comment 1
+	// replace example.com/a/a comment 2
+	example.com/a/a v1.0.0 => example.com/c/c v1.0.0-alpha.1
+	// replace example.com/a/a comment 1
+	// replace example.com/a/a comment 2
+	example.com/a/a => example.com/b/b v1.0.0-alpha.1
+)
+
+replace (
+	// replace local example.com/b/b comment 1
+	// replace local example.com/b/b comment 2
+	example.com/b/b => ./local/b
+	// replace local example.com/d/d comment 1
+	// replace local example.com/d/d comment 2
+	example.com/d/d => ./local/d
+)
+
+retract (
+	// retract v1.1.1 comment 1
+	// retract v1.1.1 comment 2
+	v1.1.1
+	// retract v1.2.2 comment 1
+	// retract v1.2.2 comment 2
+	v1.2.2
+	// retract v1.3.0-v1.3.9 comment 1
+	// retract v1.3.0-v1.3.9 comment 2
+	[v1.3.0, v1.3.9]
+)
