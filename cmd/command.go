@@ -7,6 +7,7 @@
 package cmd
 
 import (
+	"bytes"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -14,6 +15,8 @@ import (
 
 	"github.com/joshdk/buildversion"
 	"github.com/spf13/cobra"
+
+	"github.com/joshdk/modfmt/pkg/modfmt"
 )
 
 // Command returns a complete command line handler for modfmt.
@@ -47,7 +50,22 @@ func Command() *cobra.Command {
 		}
 
 		for _, filename := range filenames {
-			fmt.Println(filename)
+			// Read the original file.
+			original, err := os.ReadFile(filename)
+			if err != nil {
+				return err
+			}
+
+			// Format the file.
+			formatted, err := modfmt.Format(filename, original)
+			if err != nil {
+				return err
+			}
+
+			// Did formatting change the file or was it already formatted?
+			if !bytes.Equal(original, formatted) {
+				fmt.Println(filename)
+			}
 		}
 
 		return nil
