@@ -38,6 +38,9 @@ linters:
         - fmt.Fprintf
         - fmt.Fprintln
 
+    gomoddirectives:
+      replace-local: true
+
     goheader:
       template: |-
         Copyright Josh Komoroske. All rights reserved.
