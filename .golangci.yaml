@@ -20,6 +20,7 @@ linters:
   disable:
     # Linters that are not used for this project.
     - depguard
+    - err113
     - exhaustruct
     - forbidigo
     - gochecknoglobals
