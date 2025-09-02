@@ -7,6 +7,7 @@
 package cmd
 
 import (
+	"github.com/joshdk/buildversion"
 	"github.com/spf13/cobra"
 )
 
@@ -20,6 +21,12 @@ func Command() *cobra.Command {
 		SilenceUsage:  true,
 		SilenceErrors: true,
 	}
+
+	// Add a custom usage footer template.
+	cmd.SetUsageTemplate(cmd.UsageTemplate() + "\n" + buildversion.Template(usageTemplate))
+
+	// Set a custom version template.
+	cmd.SetVersionTemplate(buildversion.Template(versionTemplate))
 
 	cmd.RunE = func(*cobra.Command, []string) error {
 		return nil
