@@ -23,7 +23,9 @@ linters:
     - exhaustruct
     - forbidigo
     - gochecknoglobals
+    - gosec
     - noinlineerr
+    - varnamelen
     - wrapcheck
 
     # Linters that are deprecated.

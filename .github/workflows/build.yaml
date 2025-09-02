@@ -7,6 +7,52 @@ on:
       - "master"
 
 jobs:
+  modules:
+    name: modules
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+
+    outputs:
+      paths: ${{ steps.find-modules.outputs.paths }}
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+
+      - id: find-modules
+        shell: sh
+        run: echo "paths=$(find . -name go.mod | xargs dirname | jq -cnR '[inputs]')" >> $GITHUB_OUTPUT
+
+  test:
+    name: test
+    runs-on: ubuntu-latest
+    needs: modules
+
+    permissions:
+      contents: read
+
+    strategy:
+      fail-fast: false
+      matrix:
+        paths: ${{ fromJSON(needs.modules.outputs.paths) }}
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+
+      - shell: sh
+        run: |-
+          cd ${{ matrix.paths }}
+          go test -v ./...
+
   build:
     name: build
     runs-on: ubuntu-latest
