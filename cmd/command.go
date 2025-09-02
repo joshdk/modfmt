@@ -8,6 +8,7 @@ package cmd
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -36,6 +37,12 @@ func Command() *cobra.Command {
 	// Set a custom version template.
 	cmd.SetVersionTemplate(buildversion.Template(versionTemplate))
 
+	// Define --check/-c flag.
+	check := cmd.Flags().BoolP(
+		"check", "c",
+		false,
+		"exit with code 1 if any files were unformatted")
+
 	cmd.RunE = func(_ *cobra.Command, args []string) error {
 		// If no arguments are given, default to recursively searching through
 		// the current working directory.
@@ -48,6 +55,8 @@ func Command() *cobra.Command {
 		if err != nil {
 			return err
 		}
+
+		var unformatted bool
 
 		for _, filename := range filenames {
 			// Read the original file.
@@ -64,8 +73,16 @@ func Command() *cobra.Command {
 
 			// Did formatting change the file or was it already formatted?
 			if !bytes.Equal(original, formatted) {
+				unformatted = true
+
 				fmt.Println(filename)
 			}
+		}
+
+		if *check && unformatted {
+			// If check mode was requested and any files were unformatted, then
+			// exit with an error.
+			return errors.New("some files were unformatted")
 		}
 
 		return nil
