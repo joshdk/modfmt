@@ -7,6 +7,11 @@
 package cmd
 
 import (
+	"fmt"
+	"os"
+	"path/filepath"
+	"strings"
+
 	"github.com/joshdk/buildversion"
 	"github.com/spf13/cobra"
 )
@@ -28,9 +33,99 @@ func Command() *cobra.Command {
 	// Set a custom version template.
 	cmd.SetVersionTemplate(buildversion.Template(versionTemplate))
 
-	cmd.RunE = func(*cobra.Command, []string) error {
+	cmd.RunE = func(_ *cobra.Command, args []string) error {
+		// If no arguments are given, default to recursively searching through
+		// the current working directory.
+		if len(args) == 0 {
+			args = []string{"."}
+		}
+
+		// Search for go.mod and go.work files.
+		filenames, err := discover(args)
+		if err != nil {
+			return err
+		}
+
+		for _, filename := range filenames {
+			fmt.Println(filename)
+		}
+
 		return nil
 	}
 
 	return cmd
+}
+
+// discover returns a list of `go.mod` and `go.work` file paths based on the
+// given specs. Each spec can be one of the following:
+//   - If an explicit file name is given, it will be returned verbatim.
+//   - If a directory name is given, any directly contained `go.mod` or
+//     `go.work` files are returned.
+//   - If the given spec ends with `/...` then it is treated as a directory and
+//     walked in search of any `go.mod` or `go.work` files.
+func discover(specs []string) ([]string, error) { //nolint:cyclop
+	var results []string
+
+	for _, spec := range specs {
+		if directory, ok := strings.CutSuffix(spec, "/..."); ok {
+			// If the spec ends with `/...` then walk through the directory.
+			if err := filepath.Walk(directory, func(path string, info os.FileInfo, err error) error {
+				switch {
+				case err != nil:
+					// There was an actual error.
+					return err
+
+				case info.IsDir():
+					switch info.Name() {
+					case ".git":
+						// Ignore `.git/` directory.
+						return filepath.SkipDir
+					case "vendor":
+						// Ignore `vendor/` directory.
+						return filepath.SkipDir
+					}
+
+				case info.Name() == "go.mod":
+					// Found a `go.mod` file!
+					results = append(results, path)
+
+				case info.Name() == "go.work":
+					// Found a `go.work` file!
+					results = append(results, path)
+				}
+
+				return nil
+			}); err != nil {
+				return nil, err
+			}
+
+			continue
+		}
+
+		stat, err := os.Stat(spec)
+		if err != nil {
+			return nil, err
+		}
+
+		// A file was named explicitly.
+		if !stat.IsDir() {
+			results = append(results, spec)
+
+			continue
+		}
+
+		// A directory was named explicitly. Try checking for a `go.mod` file.
+		modpath := filepath.Join(spec, "go.mod")
+		if _, err := os.Stat(modpath); err == nil {
+			results = append(results, modpath)
+		}
+
+		// Finally try checking for a `go.work` file.
+		workpath := filepath.Join(spec, "go.work")
+		if _, err := os.Stat(workpath); err == nil {
+			results = append(results, workpath)
+		}
+	}
+
+	return results, nil
 }

@@ -21,8 +21,10 @@ linters:
     # Linters that are not used for this project.
     - depguard
     - exhaustruct
+    - forbidigo
     - gochecknoglobals
     - noinlineerr
+    - wrapcheck
 
     # Linters that are deprecated.
     - wsl
