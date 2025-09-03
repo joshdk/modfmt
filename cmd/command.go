@@ -21,7 +21,7 @@ import (
 )
 
 // Command returns a complete command line handler for modfmt.
-func Command() *cobra.Command {
+func Command() *cobra.Command { //nolint:cyclop,funlen
 	cmd := &cobra.Command{
 		Use:     "modfmt [directory|file]",
 		Long:    "modfmt - formatter for go.mod and go.work files",
@@ -42,6 +42,18 @@ func Command() *cobra.Command {
 		"check", "c",
 		false,
 		"exit with code 1 if any files were unformatted")
+
+	// Define --list/-l flag.
+	list := cmd.Flags().BoolP(
+		"list", "l",
+		false,
+		"list any files that were unformatted")
+
+	// Define --write/-w flag.
+	write := cmd.Flags().BoolP(
+		"write", "w",
+		false,
+		"write result to (source) file instead of stdout")
 
 	cmd.RunE = func(_ *cobra.Command, args []string) error {
 		// If no arguments are given, default to recursively searching through
@@ -72,10 +84,28 @@ func Command() *cobra.Command {
 			}
 
 			// Did formatting change the file or was it already formatted?
-			if !bytes.Equal(original, formatted) {
-				unformatted = true
+			if bytes.Equal(original, formatted) {
+				continue
+			}
 
+			unformatted = true
+
+			if *write {
+				// If write mode was requested, then silently update the
+				// original file.
+				if err := os.WriteFile(filename, formatted, 0o644); err != nil {
+					return err
+				}
+			}
+
+			if *list {
+				// If list mode was requested, then list files.
 				fmt.Println(filename)
+			} else if !*write {
+				// Otherwise if write mode was not requested, then print
+				// filename header and formatted body.
+				fmt.Printf("--- %s ---\n", filename)
+				fmt.Print(string(formatted))
 			}
 		}
 
