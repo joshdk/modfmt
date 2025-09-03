@@ -9,9 +9,11 @@ package modfmt
 import (
 	"bytes"
 	"io"
-	"sort"
+	"slices"
+	"strings"
 
 	"golang.org/x/mod/modfile"
+	"golang.org/x/mod/semver"
 )
 
 // Format attempts to parse and format the given data as either a `go.mod` or
@@ -51,32 +53,43 @@ func FormatMod(file string, data []byte) ([]byte, error) {
 //
 // See https://go.dev/ref/mod#go-mod-file
 func formatMod(mod *modfile.File, w io.Writer) {
-	sort.Slice(mod.Exclude, func(i, j int) bool {
-		return mod.Exclude[i].Mod.Path < mod.Exclude[j].Mod.Path
+	// sort `exclude (…)` directives by module path.
+	slices.SortFunc(mod.Exclude, func(a, b *modfile.Exclude) int {
+		return strings.Compare(a.Mod.Path, b.Mod.Path)
 	})
 
-	sort.Slice(mod.Godebug, func(i, j int) bool {
-		return mod.Godebug[i].Key < mod.Godebug[j].Key
+	// sort `godebug (…)` directives by key.
+	slices.SortFunc(mod.Godebug, func(a, b *modfile.Godebug) int {
+		return strings.Compare(a.Key, b.Key)
 	})
 
-	sort.Slice(mod.Ignore, func(i, j int) bool {
-		return mod.Ignore[i].Path < mod.Ignore[j].Path
+	// sort `ignore (…)` directives by file path.
+	slices.SortFunc(mod.Ignore, func(a, b *modfile.Ignore) int {
+		return strings.Compare(a.Path, b.Path)
 	})
 
-	sort.Slice(mod.Replace, func(i, j int) bool {
-		return mod.Replace[i].Old.Path < mod.Replace[j].Old.Path
+	// sort `replace (…)` directives by module path, then by version.
+	slices.SortFunc(mod.Replace, func(a, b *modfile.Replace) int {
+		if cmp := strings.Compare(a.Old.Path, b.Old.Path); cmp != 0 {
+			return cmp
+		}
+
+		return semver.Compare(a.Old.Version, b.Old.Version)
 	})
 
-	sort.Slice(mod.Require, func(i, j int) bool {
-		return mod.Require[i].Mod.Path < mod.Require[j].Mod.Path
+	// sort `require (…)` directives by module path.
+	slices.SortFunc(mod.Require, func(a, b *modfile.Require) int {
+		return strings.Compare(a.Mod.Path, b.Mod.Path)
 	})
 
-	sort.Slice(mod.Retract, func(i, j int) bool {
-		return mod.Retract[i].Low < mod.Retract[j].Low
+	// sort `retract (…)` directives by version.
+	slices.SortFunc(mod.Retract, func(a, b *modfile.Retract) int {
+		return semver.Compare(a.Low, b.Low)
 	})
 
-	sort.Slice(mod.Tool, func(i, j int) bool {
-		return mod.Tool[i].Path < mod.Tool[j].Path
+	// sort `tool (…)` directives by module path.
+	slices.SortFunc(mod.Tool, func(a, b *modfile.Tool) int {
+		return strings.Compare(a.Path, b.Path)
 	})
 
 	joinSections(w,
@@ -113,16 +126,23 @@ func FormatWork(file string, data []byte) ([]byte, error) {
 //
 // See https://go.dev/ref/mod#go-work-file
 func formatWork(work *modfile.WorkFile, w io.Writer) {
-	sort.Slice(work.Godebug, func(i, j int) bool {
-		return work.Godebug[i].Key < work.Godebug[j].Key
+	// sort `godebug (…)` directives by key.
+	slices.SortFunc(work.Godebug, func(a, b *modfile.Godebug) int {
+		return strings.Compare(a.Key, b.Key)
 	})
 
-	sort.Slice(work.Replace, func(i, j int) bool {
-		return work.Replace[i].Old.Path < work.Replace[j].Old.Path
+	// sort `replace (…)` directives by module path, then by version.
+	slices.SortFunc(work.Replace, func(a, b *modfile.Replace) int {
+		if cmp := strings.Compare(a.Old.Path, b.Old.Path); cmp != 0 {
+			return cmp
+		}
+
+		return semver.Compare(a.Old.Version, b.Old.Version)
 	})
 
-	sort.Slice(work.Use, func(i, j int) bool {
-		return work.Use[i].Path < work.Use[j].Path
+	// sort `use (…)` directives by file path.
+	slices.SortFunc(work.Use, func(a, b *modfile.Use) int {
+		return strings.Compare(a.Path, b.Path)
 	})
 
 	joinSections(w,

@@ -68,10 +68,10 @@ exclude (
 replace (
 	// replace example.com/a/a comment 1
 	// replace example.com/a/a comment 2
-	example.com/a/a v1.0.0 => example.com/c/c v1.0.0-alpha.1
+	example.com/a/a => example.com/b/b v1.0.0-alpha.1
 	// replace example.com/a/a comment 1
 	// replace example.com/a/a comment 2
-	example.com/a/a => example.com/b/b v1.0.0-alpha.1
+	example.com/a/a v1.0.0 => example.com/c/c v1.0.0-alpha.1
 )
 
 replace (
@@ -87,10 +87,10 @@ retract (
 	// retract v1.1.1 comment 1
 	// retract v1.1.1 comment 2
 	v1.1.1
-	// retract v1.2.2 comment 1
-	// retract v1.2.2 comment 2
-	v1.2.2
 	// retract v1.3.0-v1.3.9 comment 1
 	// retract v1.3.0-v1.3.9 comment 2
 	[v1.3.0, v1.3.9]
+	// retract v1.20.2 comment 1
+	// retract v1.20.2 comment 2
+	v1.20.2
 )
