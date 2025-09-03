@@ -1,0 +1,14 @@
+  Show unformatted go.mod or go.work files in the current directory:
+  $ modfmt
+
+  Show unformatted files anywhere under the directory "pkg":
+  $ modfmt pkg/...
+
+  List unformatted filenames anywhere under the directory "pkg":
+  $ modfmt -l pkg/...
+
+  Format and update all files under the current directory:
+  $ modfmt -w ./...
+
+  Exit with an error if any files were unformatted.
+  $ modfmt -c ./...
