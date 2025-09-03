@@ -25,6 +25,7 @@ linters:
     - forbidigo
     - gochecknoglobals
     - gosec
+    - mnd
     - noinlineerr
     - varnamelen
     - wrapcheck
