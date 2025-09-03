@@ -31,6 +31,9 @@ func Command() *cobra.Command { //nolint:cyclop,funlen
 		SilenceErrors: true,
 	}
 
+	// Set a custom list of examples.
+	cmd.Example = strings.TrimRight(exampleText, "\n")
+
 	// Add a custom usage footer template.
 	cmd.SetUsageTemplate(cmd.UsageTemplate() + "\n" + buildversion.Template(usageTemplate))
 
