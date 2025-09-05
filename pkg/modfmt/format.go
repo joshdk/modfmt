@@ -84,7 +84,11 @@ func formatMod(mod *modfile.File, w io.Writer) {
 
 	// sort `retract (…)` directives by version.
 	slices.SortFunc(mod.Retract, func(a, b *modfile.Retract) int {
-		return semver.Compare(a.Low, b.Low)
+		if cmp := semver.Compare(a.Low, b.Low); cmp != 0 {
+			return cmp
+		}
+
+		return semver.Compare(a.High, b.High)
 	})
 
 	// sort `tool (…)` directives by module path.
@@ -98,14 +102,14 @@ func formatMod(mod *modfile.File, w io.Writer) {
 		sectionGo(mod.Go),
 		sectionToolchain(mod.Toolchain),
 		sectionGodebug(mod.Godebug),
-		sectionTool(mod.Tool),
+		sectionRetract(mod.Retract),
 		sectionRequire(mod.Require),
 		sectionRequireIndirect(mod.Require),
 		sectionIgnore(mod.Ignore),
 		sectionExclude(mod.Exclude),
 		sectionReplace(mod.Replace),
 		sectionReplaceLocal(mod.Replace),
-		sectionRetract(mod.Retract),
+		sectionTool(mod.Tool),
 	)
 }
 
