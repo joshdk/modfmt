@@ -7,18 +7,55 @@
 
 🗂️ Formatter for go.mod and go.work files
 
-## Motivation
+## What is this?
 
-I was looking for a formatter for `go.mod` files and there didn't appear to be one that satisfied all requirements.
+This repository provides `modfmt`, a super simple formatter for `go.mod` and `go.work` files.
 
-Consistent formatting is a given, but `modfmt` also makes sure to implement the following: 
+Additionally, it implements some specific features:
 
-- Supports formatting **both** `go.mod` and `go.work` files.
-- Supports **all** the current `go.mod` and `go.work` directives.
+- Consistent ordering of sections and directives.
+- Supports formatting of **both** `go.mod` and `go.work` files.
+- Supports **all** of the current `go.mod` and `go.work` directives.
   - See https://go.dev/ref/mod#go-mod-file.
   - See https://go.dev/ref/mod#go-work-file.
 - Preserves both file header comments and directive comments.
-- Can be used to verify that files are formatted inside a CI pipeline.
+- Can be used in a CI pipeline to verify that files are formatted.
+- Can be used as a library with minimal dependencies.
+- Can be used as an `analysis.Analyzer`. (planned)
+
+## Formatting
+
+Each of the various `go.mod` and `go.work` directives are combined into a unified block, consistently sorted, and rendered along with any associated comments. The ordering of directive blocks was based off of ecosystem conventions.
+
+### Ordering of `go.mod` directives
+
+| Section              | Explanation                                                                                              |
+|----------------------|----------------------------------------------------------------------------------------------------------|
+| `// Header comments` | All header or unattached comments.                                                                       |
+| `module …`           | The [module](https://go.dev/ref/mod#go-mod-file-module) directive.                                       |
+| `go …`               | The [go](https://go.dev/ref/mod#go-mod-file-go) directive.                                               |
+| `toolchain …`        | The [toolchain](https://go.dev/ref/mod#go-mod-file-toolchain) directive.                                 |
+| `godebug (…)`        | A block of [godebug](https://go.dev/ref/mod#go-mod-file-godebug) directives.                             |
+| `retract (…)`        | A block of [retract](https://go.dev/ref/mod#go-mod-file-retract) directives.                             |
+| `require (…)`        | A block of [require](https://go.dev/ref/mod#go-mod-file-require) directives.                             |
+| `require (…)`        | A block of [require](https://go.dev/ref/mod#go-mod-file-require) directives. (for indirect dependencies) |
+| `ignore (…)`         | A block of [ignore](https://go.dev/ref/mod#go-mod-file-ignore) directives.                               |
+| `exclude (…)`        | A block of [exclude](https://go.dev/ref/mod#go-mod-file-exclude) directives.                             |
+| `replace (…)`        | A block of [replace](https://go.dev/ref/mod#go-mod-file-replace) directives.                             |
+| `replace (…)`        | A block of [replace](https://go.dev/ref/mod#go-mod-file-replace) directives. (for local replacements)    |
+| `tool (…)`           | A block of [tool](https://go.dev/ref/mod#go-mod-file-tool) directives.                                   |
+
+### Ordering of `go.work` directives
+
+| Section              | Explanation                                                                                            |
+|----------------------|--------------------------------------------------------------------------------------------------------|
+| `// Header comments` | All header or unattached comments.                                                                     |
+| `go …`               | The [go](https://go.dev/ref/mod#go-work-file-go) directive.                                            |
+| `toolchain …`        | The [toolchain](https://go.dev/ref/mod#go-work-file-toolchain) directive.                              |
+| `godebug (…)`        | A block of [godebug](https://go.dev/ref/mod#go-work-file-godebug) directives.                          |
+| `use (…)`            | A block of [use](https://go.dev/ref/mod#go-work-file-use) directives.                                  |
+| `replace (…)`        | A block of [replace](https://go.dev/ref/mod#go-work-file-replace) directives.                          |
+| `replace (…)`        | A block of [replace](https://go.dev/ref/mod#go-work-file-replace) directives. (for local replacements) |
 
 ## Installation
 
