@@ -85,6 +85,9 @@ require 		example.com/a/a v1.1.1 // require example.com/a/a comment 2
 
 		retract (
 //retract v1.1.1 comment 1
+		[v1.1.1   ,v1.3.9   ] //   retract v1.3.0-v1.3.9 comment 2
+
+		//retract v1.1.1 comment 1
 		v1.1.1 //  retract v1.1.1 comment 2
 
 		// retract v1.20.2 comment 1

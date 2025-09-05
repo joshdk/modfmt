@@ -25,13 +25,19 @@ godebug (
 	foo=true
 )
 
-tool (
-	// tool example.com/tool/a comment 1
-	// tool example.com/tool/a comment 2
-	example.com/tool/a
-	// tool example.com/tool/b comment 1
-	// tool example.com/tool/b comment 2
-	example.com/tool/b
+retract (
+	// retract v1.1.1 comment 1
+	// retract v1.1.1 comment 2
+	v1.1.1
+	// retract v1.1.1 comment 1
+	// retract v1.3.0-v1.3.9 comment 2
+	[v1.1.1, v1.3.9]
+	// retract v1.3.0-v1.3.9 comment 1
+	// retract v1.3.0-v1.3.9 comment 2
+	[v1.3.0, v1.3.9]
+	// retract v1.20.2 comment 1
+	// retract v1.20.2 comment 2
+	v1.20.2
 )
 
 require (
@@ -83,14 +89,11 @@ replace (
 	example.com/d/d => ./local/d
 )
 
-retract (
-	// retract v1.1.1 comment 1
-	// retract v1.1.1 comment 2
-	v1.1.1
-	// retract v1.3.0-v1.3.9 comment 1
-	// retract v1.3.0-v1.3.9 comment 2
-	[v1.3.0, v1.3.9]
-	// retract v1.20.2 comment 1
-	// retract v1.20.2 comment 2
-	v1.20.2
+tool (
+	// tool example.com/tool/a comment 1
+	// tool example.com/tool/a comment 2
+	example.com/tool/a
+	// tool example.com/tool/b comment 1
+	// tool example.com/tool/b comment 2
+	example.com/tool/b
 )
