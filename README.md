@@ -153,7 +153,7 @@ This code is distributed under the [MIT License][license-link], see [LICENSE.txt
 [github-release-badge]:  https://img.shields.io/github/release/joshdk/modfmt/all.svg
 [github-release-link]:   https://github.com/joshdk/modfmt/releases
 [godoc-badge]:           https://pkg.go.dev/badge/github.com/joshdk/modfmt/pkg/modfmt
-[godoc-link]:            https://pkg.go.dev//github.com/joshdk/modfmt/pkg/modfmt
+[godoc-link]:            https://pkg.go.dev/github.com/joshdk/modfmt/pkg/modfmt
 [license-badge]:         https://img.shields.io/badge/license-MIT-green.svg
 [license-file]:          https://github.com/joshdk/modfmt/blob/master/LICENSE.txt
 [license-link]:          https://opensource.org/licenses/MIT
