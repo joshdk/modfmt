@@ -20,10 +20,6 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
-      - uses: actions/setup-go@v5
-        with:
-          go-version-file: go.mod
-
       - id: find-modules
         shell: sh
         run: echo "paths=$(find . -name go.mod | xargs dirname | jq -cnR '[inputs]')" >> $GITHUB_OUTPUT
@@ -50,6 +46,6 @@ jobs:
 
       - uses: golangci/golangci-lint-action@v8
         with:
-          # https://github.com/golangci/golangci-lint/releases/tag/v2.4.0
-          version: v2.4.0
+          # https://github.com/golangci/golangci-lint/releases/tag/v2.5.0
+          version: v2.5.0
           working-directory: ${{ matrix.paths }}
